@@ -1,6 +1,13 @@
+import java.sql.SQLException;
+
 public class Main {
 
-    public static void main(String[] args) {
-        System.out.println("Hello Team Fox!");
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+
+        Database db = new Database();
+        db.GetUsers();
+
     }
+
+
 }
