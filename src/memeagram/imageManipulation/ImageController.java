@@ -1,5 +1,5 @@
-package ImageManipulation;/*
- * Class : Main
+package memeagram.imageManipulation;/*
+ * Class : memeagram.Main
  * Description : Driver class to instantiate and instance of memegrame applicaton
  * Revision Date : 11/11/2017
  * Revision Number: 1

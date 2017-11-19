@@ -1,13 +1,14 @@
-package UI;
+package memeagram.ui;
 /*
- * Class : Main
+ * Class : memeagram.Main
  * Description : Driver class to instantiate and instance of memegrame applicaton
  * Revision Date : 11/11/2017
  * Revision Number: 1
  * Authors : Team Foxtrot 
  */
 
-import ImageManipulation.ImageController;
+import memeagram.Context;
+import memeagram.imageManipulation.ImageController;
 import java.awt.Color;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -29,7 +30,7 @@ public class Memeagram{
     JFileChooser jfc;
     File workingFile;
 
-    public Memeagram() throws IOException{  //Constructor
+    public Memeagram(Context context) throws IOException{
         f = new JFrame();
         ic = new ImageController();
         jfc = new JFileChooser(FileSystemView.getFileSystemView());
@@ -42,13 +43,11 @@ public class Memeagram{
         createPanel = new JPanel();
         browsePanel = new JPanel();
         
-        //Objects and configurations
+        //objects and configurations
         imageLabel = new JLabel();
         imageLabel.setSize(600, 600);
         imageLabel.setBackground(Color.white);
 
-        
-        
         //Interactive objects and configurations
         btnFileChooser = new JButton("Browse");
         btnAddText = new JButton("Add Text");
@@ -92,8 +91,7 @@ public class Memeagram{
 			}
         	
         });
-        
-        
+
         //Tabbed Pane setup
         tp = new JTabbedPane();
         tp.setBounds(50, 50, 600, 600);
@@ -104,7 +102,5 @@ public class Memeagram{
         f.setSize(700,700);
         f.setLayout(null);
         f.setVisible(true);
-        
     }
-
 }
