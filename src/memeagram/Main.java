@@ -27,12 +27,21 @@ public class Main {
 
         // to create a new meme
 //        Meme meme = new Meme(context);
-//        meme.userId = existingUser.id;
+//        meme.userId = 1;
 //        meme.tags.add("tag1");
 //        meme.tags.add("tag2");
 //        meme.captionText = "caption text";
 //        meme.memeImage = ImageIO.read(new File("assets/sample.jpeg"));
 //        meme.saveMeme();
+
+        // to retreive a meme
+//        Meme meme = Meme.getMemeById(context,20);
+
+        // to retreive a meme image
+//        Meme meme2 = Meme.getMemeById(context,20);
+//        meme2.getImage();
+//        System.out.println(meme2);
+
     }
 
 

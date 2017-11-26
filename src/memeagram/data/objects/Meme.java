@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,6 +38,48 @@ public class Meme {
         tags = new ArrayList<>();
         Dac = context.dac;
         Dbc = context.dbc;
+    }
+
+    public boolean getImage() {
+        if (StringUtils.isNullOrEmpty(url)) {
+            return false;
+        }
+
+        try {
+            URL url = new URL(this.url);
+            memeImage = ImageIO.read(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if (memeImage != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public static Meme getMemeById(Context context, int id) throws SQLException {
+        DatabaseAccessController Dac = context.dac;
+
+        String stmt = "SELECT Id, UserId, ImageUrl, CaptionText FROM Memes WHERE Id = ?;";
+        PreparedStatement preparedStatement = Dac.conn.prepareStatement(stmt);
+        preparedStatement.setInt(1, id);
+        ResultSet rs = preparedStatement.executeQuery();
+
+        Meme meme = new Meme(context);
+
+        if (rs.next()) {
+            meme.id = rs.getInt("Id");
+            meme.userId = rs.getInt("UserId");
+            meme.url = rs.getString("ImageUrl");
+            meme.captionText = rs.getString("CaptionText");
+        }
+        else return null;
+
+        meme.tags = getMemeTags(context, meme.id);
+
+        return meme;
     }
 
     public boolean saveMeme() {
@@ -64,6 +107,10 @@ public class Meme {
                     .createSharedLinkWithSettings(dropboxPath);
 
             url = shareMeta.getUrl();
+
+            // alter query param to notify that we want to download the image
+            url = url.substring(0,url.lastIndexOf("?"));
+            url += "?dl=1";
 
         } catch (IOException | DbxException e) {
             e.printStackTrace();
@@ -94,6 +141,23 @@ public class Meme {
 
         // success
         return true;
+    }
+
+    private static ArrayList<String> getMemeTags(Context context, int memeId) throws SQLException {
+        DatabaseAccessController Dac = context.dac;
+
+        String stmt = "SELECT TagText FROM MemeTags WHERE MemeId = ?;";
+        PreparedStatement preparedStatement = Dac.conn.prepareStatement(stmt);
+        preparedStatement.setInt(1, memeId);
+        ResultSet rs = preparedStatement.executeQuery();
+
+        ArrayList<String> tags = new ArrayList<>();
+
+        while (rs.next()) {
+            tags.add(rs.getString("TagText"));
+        }
+
+        return tags;
     }
 
     private Integer insertMeme(int userId, String url, String captionText) throws SQLException
