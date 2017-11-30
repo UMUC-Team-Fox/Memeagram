@@ -9,6 +9,7 @@ import memeagram.data.DropBoxController;
 import com.mysql.jdbc.StringUtils;
 
 import javax.imageio.ImageIO;
+import javax.sql.RowSet;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.UUID;
 
 public class Meme {
@@ -30,6 +32,8 @@ public class Meme {
     public int userId;
     public String url;
     public String captionText;
+    public int numLikes;
+    public int numDislikes;
 
     private DatabaseAccessController Dac;
     private DropBoxController Dbc;
@@ -188,5 +192,56 @@ public class Meme {
             preparedStmt.execute();
         }
 
+    }
+
+    /*
+        Method getAllMemes returns all memes from the Database
+     */
+    public static ArrayList<Meme> getAllMemes(Context context) throws SQLException
+    {
+        DatabaseAccessController Dac = context.dac;
+
+        String statement = "SELECT Id, ImageUrl ,CaptionText,GROUP_CONCAT(TagText SEPARATOR ', ') TagText FROM dbo.Memes Memes LEFT JOIN dbo.MemeTags Tags ON Memes.Id=Tags.MemeId GROUP BY Memes.Id";
+        PreparedStatement preparedStmt = Dac.conn.prepareStatement(statement);
+        ResultSet rs = preparedStmt.executeQuery();
+
+        ArrayList<Meme>  returnedMemes = new ArrayList<>();
+
+        while (rs.next())
+        {
+            Meme meme = new Meme(context);
+            meme.id = rs.getInt("Id");
+            meme.userId = rs.getInt("UserId");
+            meme.url = rs.getString("ImageUrl");
+            meme.captionText = rs.getString("CaptionText");
+            String str = rs.getString("TagText");
+            String[] arr = str.split(",");
+            Collections.addAll(meme.tags, arr);
+            returnedMemes.add(meme);
+        }
+        return returnedMemes;
+    }
+
+    public static ArrayList<Meme> getMemesByTag(Context context, String tag) throws SQLException
+    {
+        DatabaseAccessController Dac = context.dac;
+
+        String statement = "SELECT Id ,ImageUrl,CaptionText ,SUM(likes.IsLike=1) numLikes ,SUM(likes.IsLike=0) numDislikes FROM dbo.Memes memes LEFT JOIN dbo.MemeTags tags ON tags.MemeId=memes.Id LEFT JOIN dbo.Likes likes ON likes.MemeId=memes.Id WHERE tags.TagText = ? GROUP BY Id";
+        PreparedStatement preparedStatement = Dac.conn.prepareStatement(statement);
+        preparedStatement.setString(1,tag);
+        ResultSet rs = preparedStatement.executeQuery();
+
+        ArrayList<Meme> returnedMemes = new ArrayList<>();
+        while (rs.next())
+        {
+            Meme meme = new Meme(context);
+            meme.id = rs.getInt("Id");
+            meme.url = rs.getString("ImageUrl");
+            meme.captionText = rs.getString("CaptionText");
+            meme.numLikes = rs.getInt("numLikes");
+            meme.numDislikes = rs.getInt("numDislikes");
+            returnedMemes.add(meme);
+        }
+        return returnedMemes;
     }
 }

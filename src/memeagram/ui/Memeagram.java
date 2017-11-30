@@ -8,12 +8,17 @@ package memeagram.ui;
  */
 
 import memeagram.Context;
+import memeagram.data.objects.Meme;
 import memeagram.imageManipulation.ImageController;
-import java.awt.Color;
+
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;  
 
@@ -29,6 +34,7 @@ public class Memeagram{
     ImageController ic;
     JFileChooser jfc;
     File workingFile;
+    JScrollPane browsePane;
 
     public Memeagram(Context context) throws IOException{
         f = new JFrame();
@@ -103,4 +109,48 @@ public class Memeagram{
         f.setLayout(null);
         f.setVisible(true);
     }
+/*    Map<String,ImageIcon> imageMap;
+
+    public void addMemesToBrowsePanel(ArrayList<Meme> memes) {
+        browsePane = new JScrollPane();
+        imageMap = createImageMap(memes);
+        DefaultListModel model = new DefaultListModel();
+        for(Meme meme : memes) model.addElement(meme);
+        JList list = new JList(model);
+        list.setCellRenderer(new MemeListRenderer());
+        browsePane.setPreferredSize(new Dimension (300,400));
+        browsePanel.add(browsePane);
+        browsePanel.repaint();
+
+
+    }
+
+    public class MemeListRenderer extends DefaultListCellRenderer {
+        Font font = new Font("helvatica", Font.BOLD, 24);
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index,
+                                                      boolean isSelected, boolean cellHasFocus) {
+            JLabel label = (JLabel) super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
+            label.setIcon(imageMap.get((String) value));
+            label.setHorizontalTextPosition(JLabel.RIGHT);
+            label.setFont(font);
+            return label;
+        }
+    }
+
+    private Map<String, ImageIcon> createImageMap(ArrayList<Meme> list) {
+        Map<String, ImageIcon> map = new HashMap<>();
+        try {
+            for (Meme meme : list)
+            {
+                if(!meme.getImage()) System.out.println("Image False");
+                meme.getImage();
+                ImageIcon icon = new ImageIcon(meme.memeImage);
+                map.put(meme.captionText, icon);
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return map;
+    }*/
 }

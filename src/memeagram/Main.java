@@ -6,6 +6,8 @@ import memeagram.ui.Memeagram;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
 import com.dropbox.core.DbxException;
 
 import javax.imageio.ImageIO;
@@ -17,7 +19,6 @@ public class Main {
 
         // create the ui
         Memeagram m = new Memeagram(context);
-
         // to create a new user
 //        User newUser = new User(context, "username", "first", "last");
 //        boolean successfullyCreated = newUser.create();
@@ -41,6 +42,10 @@ public class Main {
 //        Meme meme2 = Meme.getMemeById(context,20);
 //        meme2.getImage();
 //        System.out.println(meme2);
+
+        // to get memes by a tag.
+        //ArrayList<Meme> list = Meme.getMemesByTag(context,"tag1");
+        //m.addMemesToBrowsePanel(list);
 
     }
 
