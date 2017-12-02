@@ -44,8 +44,8 @@ public class Main {
 //        System.out.println(meme2);
 
         // to get memes by a tag.
-        //ArrayList<Meme> list = Meme.getMemesByTag(context,"tag1");
-        //m.addMemesToBrowsePanel(list);
+        ArrayList<Meme> list = Meme.getMemesByTag(context,"tag1");
+        m.addMemesToBrowsePanel(list);
 
     }
 

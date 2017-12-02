@@ -1,6 +1,7 @@
 package memeagram.data.objects;
 
 import com.dropbox.core.DbxException;
+import com.dropbox.core.v1.DbxEntry;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import memeagram.Context;
@@ -9,13 +10,14 @@ import memeagram.data.DropBoxController;
 import com.mysql.jdbc.StringUtils;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.sql.RowSet;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -63,6 +65,20 @@ public class Meme {
         return false;
     }
 
+    /*public BufferedImage returnImage(String stringURL) throws DbxException, IOException {
+
+        
+        DbxClientV2 dropbox = Dbc.client;
+        File file;
+
+        dropbox.files()
+                .download(stringURL)
+                .getInputStream()
+                .close();
+
+
+    }*/
+
     public static Meme getMemeById(Context context, int id) throws SQLException {
         DatabaseAccessController Dac = context.dac;
 
@@ -78,6 +94,7 @@ public class Meme {
             meme.userId = rs.getInt("UserId");
             meme.url = rs.getString("ImageUrl");
             meme.captionText = rs.getString("CaptionText");
+
         }
         else return null;
 
@@ -240,6 +257,7 @@ public class Meme {
             meme.captionText = rs.getString("CaptionText");
             meme.numLikes = rs.getInt("numLikes");
             meme.numDislikes = rs.getInt("numDislikes");
+            meme.memeImage = getMemeImage(meme.url);
             returnedMemes.add(meme);
         }
         return returnedMemes;

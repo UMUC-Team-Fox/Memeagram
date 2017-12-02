@@ -109,7 +109,7 @@ public class Memeagram{
         f.setLayout(null);
         f.setVisible(true);
     }
-/*    Map<String,ImageIcon> imageMap;
+    Map<String,ImageIcon> imageMap;
 
     public void addMemesToBrowsePanel(ArrayList<Meme> memes) {
         browsePane = new JScrollPane();
@@ -121,6 +121,7 @@ public class Memeagram{
         browsePane.setPreferredSize(new Dimension (300,400));
         browsePanel.add(browsePane);
         browsePanel.repaint();
+        browsePanel.validate();
 
 
     }
@@ -144,7 +145,6 @@ public class Memeagram{
             for (Meme meme : list)
             {
                 if(!meme.getImage()) System.out.println("Image False");
-                meme.getImage();
                 ImageIcon icon = new ImageIcon(meme.memeImage);
                 map.put(meme.captionText, icon);
             }
@@ -152,5 +152,5 @@ public class Memeagram{
             ex.printStackTrace();
         }
         return map;
-    }*/
+    }
 }
