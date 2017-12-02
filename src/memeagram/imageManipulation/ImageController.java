@@ -32,12 +32,16 @@ public class ImageController{
  
     }
     
-    public BufferedImage addText(BufferedImage img , String text) throws IOException{
+    public BufferedImage addText(BufferedImage img , String text, Boolean pos) throws IOException{
     	int w = img.getWidth();
     	int h = img.getHeight();
     	Graphics g = img.getGraphics();
     	g.setFont(g.getFont().deriveFont(35f));
-    	g.drawString(text, 25 , h - 25);
+    	if(pos) {
+    	  g.drawString(text, 25 , 30);
+    	}else {
+          g.drawString(text, 25 , h - 25);
+    	}
     	g.dispose();
     	return img;
     }

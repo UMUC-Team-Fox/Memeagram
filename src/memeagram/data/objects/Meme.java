@@ -257,7 +257,7 @@ public class Meme {
             meme.captionText = rs.getString("CaptionText");
             meme.numLikes = rs.getInt("numLikes");
             meme.numDislikes = rs.getInt("numDislikes");
-            meme.memeImage = getMemeImage(meme.url);
+            //meme.memeImage = getMemeImage(meme.url);
             returnedMemes.add(meme);
         }
         return returnedMemes;
