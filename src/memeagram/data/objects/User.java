@@ -14,16 +14,23 @@ public class User {
 
     DatabaseAccessController Dac;
 
-    public User(Context context, String userName) throws SQLException {
+    private User (Context context) {
         Dac = context.dac;
-        getUser(userName);
+    }
+    private User(Context context, String userName) throws SQLException {
+        this(context);
+        this.userName = userName;
     }
 
     public User(Context context, String userName, String firstName, String lastName) throws SQLException {
         this(context, userName);
-        this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public User(Context context, int id, String userName, String firstName, String lastName) throws SQLException {
+        this(context, userName, firstName, lastName);
+        this.id = id;
     }
 
     public boolean create() throws SQLException {
@@ -52,7 +59,9 @@ public class User {
         return preparedStatement.executeUpdate();
     }
 
-    private boolean getUser(String _userName) throws SQLException {
+    public static User getUser(Context context, String _userName) throws SQLException {
+
+        DatabaseAccessController Dac = context.dac;
 
         String stmt = "SELECT Id, UserName, FirstName, LastName FROM Users WHERE UserName = ?;";
         PreparedStatement preparedStatement = Dac.conn.prepareStatement(stmt);
@@ -60,12 +69,14 @@ public class User {
         ResultSet rs = preparedStatement.executeQuery();
 
         if (rs.next()) {
-            id = rs.getInt("Id");
-            userName = rs.getString("UserName");
-            firstName = rs.getString("FirstName");
-            lastName = rs.getString("LastName");
-            return true;
+            User user = new User(context);
+            user.id = rs.getInt("Id");
+            user.userName = rs.getString("UserName");
+            user.firstName = rs.getString("FirstName");
+            user.lastName = rs.getString("LastName");
+
+            return user;
         }
-        return false;
+        return null;
     }
 }

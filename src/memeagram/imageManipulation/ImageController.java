@@ -6,6 +6,8 @@ package memeagram.imageManipulation;/*
  * Authors : Team Foxtrot 
  */
 
+import com.sun.istack.internal.NotNull;
+
 import java.awt.AlphaComposite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -19,36 +21,34 @@ import javax.imageio.ImageIO;
 
 public class ImageController{
 
-
-    public ImageController(){ //Constructor
-
+    public static BufferedImage getImage(File f) throws IOException{
+        return ImageIO.read(f);
     }
     
-    
-    public BufferedImage getImage(File f) throws IOException{
-
-        BufferedImage img = ImageIO.read(f);
-        return img;
- 
-    }
-    
-    public BufferedImage addText(BufferedImage img , String text, Boolean pos) throws IOException{
-    	int w = img.getWidth();
+    public static BufferedImage addText(BufferedImage img, String text, @NotNull Boolean pos) {
+        int w = img.getWidth();
     	int h = img.getHeight();
-    	Graphics g = img.getGraphics();
+
+        BufferedImage newImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+
+        Graphics g = newImg.getGraphics();
+        g.drawImage(img, 0, 0, null);
     	g.setFont(g.getFont().deriveFont(35f));
+
     	if(pos) {
     	  g.drawString(text, 25 , 30);
     	}else {
           g.drawString(text, 25 , h - 25);
     	}
+
     	g.dispose();
-    	return img;
+
+    	return newImg;
     }
     
     
     //Takes an image and size argument and returns resized image
-    public BufferedImage resizeImage(BufferedImage resizeMe, int maxWidth, int maxHeight) throws IOException {
+    public static BufferedImage resizeImage(BufferedImage resizeMe, int maxWidth, int maxHeight) {
 
         int type = resizeMe.getType() ==0? BufferedImage.TYPE_INT_ARGB : resizeMe.getType();
 
@@ -56,12 +56,11 @@ public class ImageController{
         int fWidth = maxWidth;
         if(resizeMe.getHeight() > maxHeight || resizeMe.getWidth() > maxWidth){
             fHeight = maxHeight;
-            int wid = maxWidth;
             float sum = (float)resizeMe.getWidth() / (float)resizeMe.getHeight();
             fWidth = Math.round(fHeight* sum);
-            if(fWidth > wid){
-                fHeight = Math.round(wid/sum);
-                fWidth = wid;
+            if(fWidth > maxWidth){
+                fHeight = Math.round(maxWidth /sum);
+                fWidth = maxWidth;
             }
         }
         BufferedImage resizedImage = new BufferedImage(fWidth, fHeight, type);

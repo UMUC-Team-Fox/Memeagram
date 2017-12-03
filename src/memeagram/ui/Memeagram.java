@@ -20,165 +20,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.filechooser.FileSystemView;  
+import javax.swing.filechooser.FileSystemView;
 
 public class Memeagram{
 
     JFrame f;
     JPanel mainPanel,browsePanel, imagePanel;
-    Box createBox, createTopBox1, createTopBox2, createBottomBox1, createBottomBox2;
-    JButton btnFileChooser, btnAddText, btnSubmit;
-    JTextField tFieldImageText, tFieldTag;
     JTabbedPane tp;
-    BufferedImage originalImage, memeImage;
-    JLabel imageLabel;
-    ImageController ic;
-    JFileChooser jfc;
-    File workingFile;
     JScrollPane browsePane, imagePane;
-    ButtonGroup bg;
-    JRadioButton rBtnTop, rBtnBottom;
-    
 
     public Memeagram(Context context) throws IOException{
         f = new JFrame("Memeagram");
-        ic = new ImageController();
-        jfc = new JFileChooser(FileSystemView.getFileSystemView());
-        File wkDir = new File(System.getProperty("user.dir"));
-        jfc.setCurrentDirectory(wkDir);
-        jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-      
-        
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+
         //Panels and Boxes
         mainPanel = new JPanel();
         browsePanel = new JPanel();
-        imagePanel = new JPanel();
-        imagePanel.setPreferredSize(new Dimension(400,400));
-        imagePanel.setBackground(Color.WHITE);
-
-        
-        createBox = Box.createVerticalBox();  
-        createTopBox1 = Box.createHorizontalBox();
-        createTopBox2 = Box.createHorizontalBox();
-        createBottomBox1 = Box.createHorizontalBox();
-        createBottomBox2 = Box.createHorizontalBox();
-        
-        //objects and configurations
-        imageLabel = new JLabel();
-        imageLabel.setSize(400, 400);
-        imageLabel.setBackground(Color.white);
-        imageLabel.setPreferredSize(new Dimension (400,400));
-
-   
-
-        //Interactive objects and configurations
-        btnFileChooser = new JButton("Browse");
-        btnAddText = new JButton("Add Text");
-        btnSubmit = new JButton("Submit");
-        tFieldImageText = new JTextField(15);
-        tFieldImageText.setMaximumSize(tFieldImageText.getPreferredSize());
-        tFieldTag = new JTextField(15);
-        tFieldTag.setMaximumSize(tFieldTag.getPreferredSize());
-        
-        //Adding objects to panels and Boxes
-         
-        JLabel fileText = new JLabel("Select and image file : ");
-        createTopBox1.add(fileText);
-        createTopBox1.add(Box.createHorizontalStrut(10));
-        createTopBox1.add(btnFileChooser);
-        
-        JLabel imageAddText = new JLabel("Add Text to Image:");
-        createTopBox2.add(imageAddText);
-        createTopBox2.add(Box.createHorizontalStrut(10));
-        createTopBox2.add(tFieldImageText);
-        createTopBox2.add(Box.createHorizontalStrut(10));
-        bg = new ButtonGroup();
-        rBtnTop = new JRadioButton("Top");
-        rBtnBottom = new JRadioButton("Bottom");
-        bg.add(rBtnTop);
-        bg.add(rBtnBottom);
-        createTopBox2.add(rBtnTop);
-        createTopBox2.add(rBtnBottom);
-        createTopBox2.add(Box.createHorizontalStrut(10));
-        createTopBox2.add(btnAddText); 
-        
-        JLabel tagsText = new JLabel("Meme tag:");
-        createBottomBox1.add(tagsText);
-        createBottomBox1.add(Box.createHorizontalStrut(10));
-        createBottomBox1.add(tFieldTag);  
-        
-        JLabel submitText = new JLabel("Submit Meme to Library");
-        createBottomBox2.add(submitText);
-        createBottomBox2.add(Box.createHorizontalStrut(10));
-        createBottomBox2.add(btnSubmit);
-        
-        
-        
-        
-        imagePanel.add(imageLabel);
-        createBox.add(createTopBox1);
-        createBox.add(createTopBox2);
-        createBox.add(imagePanel);
-        createBox.add(createBottomBox1);
-        createBox.add(createBottomBox2);
-      
-        //Listeners
-        //Button listener for file chooser button
-        btnFileChooser.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				int returnValue = jfc.showOpenDialog(null);
-				if(returnValue == JFileChooser.APPROVE_OPTION) {
-						
-					    workingFile = jfc.getSelectedFile();
-					    try{
-					    originalImage = ic.getImage(workingFile);
-					    originalImage = ic.resizeImage(originalImage, 400, 400);
-					    imageLabel.setIcon(new ImageIcon(originalImage));
-						createBox.validate();
-						createBox.repaint(); // refresh the create panel
-					    }catch(IOException ex) {}
-				}
-			}
-        	
-        });
-        
-        //Button Listener for Add Text button
-        btnAddText.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e) {
-				boolean onTop = false;
-				if(rBtnTop.isSelected()) {
-					onTop = true;
-				}
-				
-				try{memeImage = ic.addText(originalImage, tFieldImageText.getText(), onTop);} catch(IOException ex){}
-				createBox.validate();
-				createBox.repaint(); // refresh the create panel
-			}
-        	
-        });
-        
-        //Button Listener for submit 
-        btnSubmit.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				try {
-					
-				}catch(Exception ex) {}
-				
-			}
-        	
-        });
+        imagePanel = new ImagePanel(context);
 
         //Tabbed Pane setup
         tp = new JTabbedPane();
         tp.setBounds(50, 50, 600, 600);
         tp.add(" Home ", mainPanel);
-        tp.add(" Create ", createBox);
+        tp.add(" Create ", imagePanel);
         tp.add(" Browse ", browsePanel);
         f.add(tp);
         f.setSize(700,700);
@@ -192,9 +57,9 @@ public class Memeagram{
     public void addMemesToBrowsePanel(ArrayList<Meme> memes) {
         browsePane = new JScrollPane();
         imageMap = createImageMap(memes);
-        DefaultListModel model = new DefaultListModel();
+        DefaultListModel<Meme> model = new DefaultListModel<>();
         for(Meme meme : memes) model.addElement(meme);
-        JList list = new JList(model);
+        JList<Meme> list = new JList<>(model);
         list.setCellRenderer(new MemeListRenderer());
         browsePane.setPreferredSize(new Dimension (300,400));
         browsePanel.add(browsePane);
