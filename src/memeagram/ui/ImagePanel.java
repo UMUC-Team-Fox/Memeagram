@@ -2,6 +2,7 @@ package memeagram.ui;
 
 import memeagram.Context;
 import memeagram.data.objects.Meme;
+import memeagram.data.objects.User;
 import memeagram.imageManipulation.ImageController;
 
 import javax.swing.*;
@@ -19,11 +20,13 @@ import java.io.IOException;
 class ImagePanel extends JPanel{
 
     Meme meme;
+    public User user;
 
     ImagePanel(Context context) {
         setPreferredSize(new Dimension(400,400));
         setBackground(Color.WHITE);
 
+        
         File wkDir = new File(System.getProperty("user.dir"));
 
         JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView());
@@ -137,4 +140,5 @@ class ImagePanel extends JPanel{
         });
     }
 
+    
 }

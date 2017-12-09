@@ -17,7 +17,7 @@ public class User {
     private User (Context context) {
         Dac = context.dac;
     }
-    private User(Context context, String userName) throws SQLException {
+    public User(Context context, String userName) throws SQLException {
         this(context);
         this.userName = userName;
     }
