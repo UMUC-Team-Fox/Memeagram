@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.UUID;
 
 public class Meme {
@@ -262,4 +263,33 @@ public class Meme {
         }
         return returnedMemes;
     }
+    /**
+     * You can also do something like this to sort,
+     *
+     * ArrayList memes = Memes.getMemesByTag(context,tag);
+     * memes.sort(Comparator.comparing(Meme::getNumLikes).thenComparing(Meme::getTag));
+     *
+     * we would just have to create getter methods
+     */
+
+    /**
+     * Comparator used to sort an ArrayList of Memes by Number of Likes in Ascending Order
+     */
+    public static Comparator<Meme> SORT_LIKES_ASCENDING = (one, other) -> one.numLikes < other.numLikes ? 1: one.numLikes > other.numLikes ? -1: 0;
+
+    /**
+     * Comparator used to sort an ArrayList of Memes by Number of Likes in Descending Order
+     */
+    public static Comparator<Meme> SORT_LIKES_DESCENDING = (one, other) -> one.numLikes > other.numLikes ? 1: one.numLikes < other.numLikes ? -1: 0;
+
+    /**
+     * Comparator used to sort an ArrayList of Memes by Number of Dislikes in Ascending Order
+     */
+    public static Comparator<Meme> SORT_DISLIKES_ASCENDING = (one,other) -> one.numDislikes < other.numDislikes ? 1: one.numDislikes > other.numDislikes ? -1: 0;
+
+    /**
+     * Comparator used to sort an ArrayList of Memes by Number of Dislikes in Descending Order
+     */
+    public static Comparator<Meme> SORT_DISLIKES_DESCENDING = (one,other) -> one.numDislikes > other.numDislikes ? 1: one.numDislikes < other.numDislikes ? -1: 0;
+
 }
