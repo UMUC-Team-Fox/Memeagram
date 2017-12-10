@@ -23,9 +23,6 @@ public class Main {
 //        User newUser = new User(context, "username", "first", "last");
 //        boolean successfullyCreated = newUser.create();
 
-        // to retrieve a user
-//        User existingUser = new User(context, "justin");
-
         // to create a new meme
 //        Meme meme = new Meme(context);
 //        meme.userId = 1;

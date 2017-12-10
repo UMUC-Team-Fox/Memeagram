@@ -41,24 +41,6 @@ public class User {
         return userCreated;
     }
 
-    private boolean insertUser() throws SQLException {
-        String stmt = "INSERT INTO Users(UserName, FirstName, LastName) VALUES(?,?,?)";
-        PreparedStatement preparedStmt = Dac.conn.prepareStatement(stmt);
-        preparedStmt.setString(1,userName);
-        preparedStmt.setString(2,firstName);
-        preparedStmt.setString(3,lastName);
-
-        return preparedStmt.execute();
-    }
-
-    private Integer getUserId(String userName) throws SQLException
-    {
-        String stmt = "SELECT Id FROM Users WHERE UserName = ?;";
-        PreparedStatement preparedStatement = Dac.conn.prepareStatement(stmt);
-        preparedStatement.setString(1,userName);
-        return preparedStatement.executeUpdate();
-    }
-
     public static User getUser(Context context, String _userName) throws SQLException {
 
         DatabaseAccessController Dac = context.dac;
@@ -78,5 +60,23 @@ public class User {
             return user;
         }
         return null;
+    }
+
+    private Integer getUserId(String userName) throws SQLException
+    {
+        String stmt = "SELECT Id FROM Users WHERE UserName = ?;";
+        PreparedStatement preparedStatement = Dac.conn.prepareStatement(stmt);
+        preparedStatement.setString(1,userName);
+        return preparedStatement.executeUpdate();
+    }
+
+    private boolean insertUser() throws SQLException {
+        String stmt = "INSERT INTO Users(UserName, FirstName, LastName) VALUES(?,?,?)";
+        PreparedStatement preparedStmt = Dac.conn.prepareStatement(stmt);
+        preparedStmt.setString(1,userName);
+        preparedStmt.setString(2,firstName);
+        preparedStmt.setString(3,lastName);
+
+        return preparedStmt.execute();
     }
 }

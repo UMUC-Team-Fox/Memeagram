@@ -117,7 +117,6 @@ public class Meme {
             return false;
         }
 
-
         // store temp file to dropbox and get direct url
         String dropboxPath = String.format("/memes/%s", file.getName());
         try(InputStream in = new FileInputStream(file.getAbsolutePath())) {
@@ -163,6 +162,58 @@ public class Meme {
 
         // success
         return true;
+    }
+
+    /*
+        Method getAllMemes returns all memes from the Database
+     */
+    public static ArrayList<Meme> getAllMemes(Context context) throws SQLException
+    {
+        DatabaseAccessController Dac = context.dac;
+
+        String statement = "SELECT Id, ImageUrl ,CaptionText,GROUP_CONCAT(TagText SEPARATOR ', ') TagText FROM dbo.Memes Memes LEFT JOIN dbo.MemeTags Tags ON Memes.Id=Tags.MemeId GROUP BY Memes.Id";
+        PreparedStatement preparedStmt = Dac.conn.prepareStatement(statement);
+        ResultSet rs = preparedStmt.executeQuery();
+
+        ArrayList<Meme>  returnedMemes = new ArrayList<>();
+
+        while (rs.next())
+        {
+            Meme meme = new Meme(context);
+            meme.id = rs.getInt("Id");
+            meme.url = rs.getString("ImageUrl");
+            meme.captionText = rs.getString("CaptionText");
+            meme.tags = getMemeTags(context, meme.id);
+            String str = rs.getString("TagText");
+            String[] arr = str.split(",");
+            Collections.addAll(meme.tags, arr);
+            returnedMemes.add(meme);
+        }
+        return returnedMemes;
+    }
+
+    public static ArrayList<Meme> getMemesByTag(Context context, String tag) throws SQLException
+    {
+        DatabaseAccessController Dac = context.dac;
+
+        String statement = "SELECT Id ,ImageUrl,CaptionText ,SUM(likes.IsLike=1) numLikes ,SUM(likes.IsLike=0) numDislikes FROM dbo.Memes memes LEFT JOIN dbo.MemeTags tags ON tags.MemeId=memes.Id LEFT JOIN dbo.Likes likes ON likes.MemeId=memes.Id WHERE tags.TagText = ? GROUP BY Id";
+        PreparedStatement preparedStatement = Dac.conn.prepareStatement(statement);
+        preparedStatement.setString(1,tag);
+        ResultSet rs = preparedStatement.executeQuery();
+
+        ArrayList<Meme> returnedMemes = new ArrayList<>();
+        while (rs.next())
+        {
+            Meme meme = new Meme(context);
+            meme.id = rs.getInt("Id");
+            meme.url = rs.getString("ImageUrl");
+            meme.captionText = rs.getString("CaptionText");
+            meme.numLikes = rs.getInt("numLikes");
+            meme.numDislikes = rs.getInt("numDislikes");
+            //meme.memeImage = getMemeImage(meme.url);
+            returnedMemes.add(meme);
+        }
+        return returnedMemes;
     }
 
     private static ArrayList<String> getMemeTags(Context context, int memeId) throws SQLException {
@@ -212,57 +263,6 @@ public class Meme {
 
     }
 
-    /*
-        Method getAllMemes returns all memes from the Database
-     */
-    public static ArrayList<Meme> getAllMemes(Context context) throws SQLException
-    {
-        DatabaseAccessController Dac = context.dac;
-
-        String statement = "SELECT Id, ImageUrl ,CaptionText,GROUP_CONCAT(TagText SEPARATOR ', ') TagText FROM dbo.Memes Memes LEFT JOIN dbo.MemeTags Tags ON Memes.Id=Tags.MemeId GROUP BY Memes.Id";
-        PreparedStatement preparedStmt = Dac.conn.prepareStatement(statement);
-        ResultSet rs = preparedStmt.executeQuery();
-
-        ArrayList<Meme>  returnedMemes = new ArrayList<>();
-
-        while (rs.next())
-        {
-            Meme meme = new Meme(context);
-            meme.id = rs.getInt("Id");
-            meme.userId = rs.getInt("UserId");
-            meme.url = rs.getString("ImageUrl");
-            meme.captionText = rs.getString("CaptionText");
-            String str = rs.getString("TagText");
-            String[] arr = str.split(",");
-            Collections.addAll(meme.tags, arr);
-            returnedMemes.add(meme);
-        }
-        return returnedMemes;
-    }
-
-    public static ArrayList<Meme> getMemesByTag(Context context, String tag) throws SQLException
-    {
-        DatabaseAccessController Dac = context.dac;
-
-        String statement = "SELECT Id ,ImageUrl,CaptionText ,SUM(likes.IsLike=1) numLikes ,SUM(likes.IsLike=0) numDislikes FROM dbo.Memes memes LEFT JOIN dbo.MemeTags tags ON tags.MemeId=memes.Id LEFT JOIN dbo.Likes likes ON likes.MemeId=memes.Id WHERE tags.TagText = ? GROUP BY Id";
-        PreparedStatement preparedStatement = Dac.conn.prepareStatement(statement);
-        preparedStatement.setString(1,tag);
-        ResultSet rs = preparedStatement.executeQuery();
-
-        ArrayList<Meme> returnedMemes = new ArrayList<>();
-        while (rs.next())
-        {
-            Meme meme = new Meme(context);
-            meme.id = rs.getInt("Id");
-            meme.url = rs.getString("ImageUrl");
-            meme.captionText = rs.getString("CaptionText");
-            meme.numLikes = rs.getInt("numLikes");
-            meme.numDislikes = rs.getInt("numDislikes");
-            //meme.memeImage = getMemeImage(meme.url);
-            returnedMemes.add(meme);
-        }
-        return returnedMemes;
-    }
     /**
      * You can also do something like this to sort,
      *
@@ -275,21 +275,21 @@ public class Meme {
     /**
      * Comparator used to sort an ArrayList of Memes by Number of Likes in Ascending Order
      */
-    public static Comparator<Meme> SORT_LIKES_ASCENDING = (one, other) -> one.numLikes < other.numLikes ? 1: one.numLikes > other.numLikes ? -1: 0;
+    public static Comparator<Meme> SORT_LIKES_ASCENDING = (one, other) -> Integer.compare(other.numLikes, one.numLikes);
 
     /**
      * Comparator used to sort an ArrayList of Memes by Number of Likes in Descending Order
      */
-    public static Comparator<Meme> SORT_LIKES_DESCENDING = (one, other) -> one.numLikes > other.numLikes ? 1: one.numLikes < other.numLikes ? -1: 0;
+    public static Comparator<Meme> SORT_LIKES_DESCENDING = (one, other) -> Integer.compare(one.numLikes, other.numLikes);
 
     /**
      * Comparator used to sort an ArrayList of Memes by Number of Dislikes in Ascending Order
      */
-    public static Comparator<Meme> SORT_DISLIKES_ASCENDING = (one,other) -> one.numDislikes < other.numDislikes ? 1: one.numDislikes > other.numDislikes ? -1: 0;
+    public static Comparator<Meme> SORT_DISLIKES_ASCENDING = (one,other) -> Integer.compare(other.numDislikes, one.numDislikes);
 
     /**
      * Comparator used to sort an ArrayList of Memes by Number of Dislikes in Descending Order
      */
-    public static Comparator<Meme> SORT_DISLIKES_DESCENDING = (one,other) -> one.numDislikes > other.numDislikes ? 1: one.numDislikes < other.numDislikes ? -1: 0;
+    public static Comparator<Meme> SORT_DISLIKES_DESCENDING = (one,other) -> Integer.compare(one.numDislikes, other.numDislikes);
 
 }

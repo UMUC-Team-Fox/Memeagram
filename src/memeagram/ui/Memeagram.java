@@ -17,6 +17,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -108,12 +109,13 @@ public class Memeagram{
     	btnSignIn.addActionListener(new ActionListener(){
 
     		public void actionPerformed(ActionEvent e) {
-    			try {
-    			user = new User(context, existingUsername.getText());
-    			viewFullApp();
-    			}catch(Exception ex) {}
+                try {
+                    user = User.getUser(context, existingUsername.getText());
+                    viewFullApp();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
     		}
-    		
     	});
     	mainBox.add(Box.createVerticalStrut(10));
     	mainBox.add(btnSignIn);
@@ -136,9 +138,6 @@ public class Memeagram{
         f.setSize(700,700);
         f.setLayout(null);
         f.setVisible(true);
-        
-        
-
     }
     
     public void viewFullApp() {

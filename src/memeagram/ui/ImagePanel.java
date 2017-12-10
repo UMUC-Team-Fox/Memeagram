@@ -131,8 +131,7 @@ class ImagePanel extends JPanel{
 
         //Button Listener for submit
         btnSubmit.addActionListener(e -> {
-            // todo create user and use that id instead of this hardcoded value.
-            meme.userId = 1;
+            meme.userId = user.id;
             meme.tags.add(tagsText.getText());
 
            boolean test =  meme.saveMeme();

@@ -73,7 +73,14 @@ public class BrowsePanel extends JPanel {
         JButton btnSearchRating = new JButton("Search Rated");
         btnSearchRating.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try{memeList = Meme.getAllMemes(context);}catch(Exception ex) {}
+				try{
+				    memeList = Meme.getAllMemes(context);
+				    updateMemeImage(0);
+				}
+				catch(Exception ex) {
+				    ex.printStackTrace();
+                }
+
 				if(memeList.isEmpty()) {
 					System.out.println("Search was unsuccessful");
 				}else {
@@ -152,13 +159,13 @@ public class BrowsePanel extends JPanel {
 	
 	public void updateMemeImage(Integer i) throws SQLException {
 	  meme = memeList.get(i);
-      Meme meme = Meme.getMemeById(context,20);
       meme.getImage();
       imageLabel.setIcon(new ImageIcon(meme.memeImage));
       this.validate();
       this.repaint();
-      
 	}
+
+
 
 
 }
