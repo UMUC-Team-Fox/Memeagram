@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.sql.RowSet;
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
@@ -95,7 +96,8 @@ public class Meme {
             meme.userId = rs.getInt("UserId");
             meme.url = rs.getString("ImageUrl");
             meme.captionText = rs.getString("CaptionText");
-
+            meme.getLikes();
+            meme.getDislikes();
         }
         else return null;
 
@@ -184,6 +186,8 @@ public class Meme {
             meme.url = rs.getString("ImageUrl");
             meme.captionText = rs.getString("CaptionText");
             meme.tags = getMemeTags(context, meme.id);
+            meme.getLikes();
+            meme.getDislikes();
             String str = rs.getString("TagText");
             String[] arr = str.split(",");
             Collections.addAll(meme.tags, arr);
@@ -196,7 +200,7 @@ public class Meme {
     {
         DatabaseAccessController Dac = context.dac;
 
-        String statement = "SELECT Id ,ImageUrl,CaptionText ,SUM(likes.IsLike=1) numLikes ,SUM(likes.IsLike=0) numDislikes FROM dbo.Memes memes LEFT JOIN dbo.MemeTags tags ON tags.MemeId=memes.Id LEFT JOIN dbo.Likes likes ON likes.MemeId=memes.Id WHERE tags.TagText = ? GROUP BY Id";
+        String statement = "SELECT Id ,ImageUrl,CaptionText FROM dbo.Memes memes LEFT JOIN dbo.MemeTags tags ON tags.MemeId=memes.Id WHERE tags.TagText = ? GROUP BY Id";
         PreparedStatement preparedStatement = Dac.conn.prepareStatement(statement);
         preparedStatement.setString(1,tag);
         ResultSet rs = preparedStatement.executeQuery();
@@ -208,12 +212,22 @@ public class Meme {
             meme.id = rs.getInt("Id");
             meme.url = rs.getString("ImageUrl");
             meme.captionText = rs.getString("CaptionText");
-            meme.numLikes = rs.getInt("numLikes");
-            meme.numDislikes = rs.getInt("numDislikes");
+            meme.getLikes();
+            meme.getDislikes();
             //meme.memeImage = getMemeImage(meme.url);
             returnedMemes.add(meme);
         }
         return returnedMemes;
+    }
+
+    public static void likeMeme(Context context, int userId, int memeId, boolean isLike) throws SQLException {
+        DatabaseAccessController Dac = context.dac;
+        String stmt = "INSERT INTO Likes(UserId, MemeId, IsLike) VALUES(?,?,?);";
+        PreparedStatement preparedStatement = Dac.conn.prepareStatement(stmt);
+        preparedStatement.setInt(1, userId);
+        preparedStatement.setInt(2, memeId);
+        preparedStatement.setBoolean(3, isLike);
+        preparedStatement.execute();
     }
 
     private static ArrayList<String> getMemeTags(Context context, int memeId) throws SQLException {
@@ -259,6 +273,41 @@ public class Meme {
             preparedStmt.setInt(1,memeId);
             preparedStmt.setString(2,tag);
             preparedStmt.execute();
+        }
+    }
+
+    public void getLikes() {
+        String stmt = "SELECT SUM(IsLike=1) numLikes FROM dbo.Likes WHERE MemeId = ?;";
+
+        try {
+            PreparedStatement preparedStatement = Dac.conn.prepareStatement(stmt);
+            preparedStatement.setInt(1, id);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            rs.next();
+            numLikes = rs.getInt("numLikes");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            numLikes = 0;
+        }
+
+    }
+
+    public void getDislikes() {
+        String stmt = "SELECT SUM(IsLike=0) numDislikes FROM dbo.Likes WHERE MemeId = ?;";
+
+        try{
+            PreparedStatement preparedStatement = Dac.conn.prepareStatement(stmt);
+            preparedStatement.setInt(1, id);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            rs.next();
+            numDislikes = rs.getInt("numDislikes");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            numDislikes = 0;
         }
 
     }

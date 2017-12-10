@@ -132,7 +132,7 @@ class ImagePanel extends JPanel{
         //Button Listener for submit
         btnSubmit.addActionListener(e -> {
             meme.userId = user.id;
-            meme.tags.add(tagsText.getText());
+            meme.tags.add(tFieldTag.getText());
 
            boolean test =  meme.saveMeme();
            if(test) {

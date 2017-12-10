@@ -34,9 +34,12 @@ public class Memeagram{
     JTabbedPane tp;
     JScrollPane browsePane, imagePane;
     User user;
+    Context context;
  
 
     public Memeagram(Context context) throws IOException{
+        this.context = context;
+
         f = new JFrame("Memeagram");
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -141,7 +144,14 @@ public class Memeagram{
     }
     
     public void viewFullApp() {
+        try {
+            this.user = User.getUser(context, user.userName);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     	imagePanel.user = this.user;
+    	browsePanel.user = this.user;
     	tp.add(" Create ", imagePanel);
         tp.add(" Browse ", browsePanel);
     	f.add(tp);
