@@ -135,7 +135,12 @@ class ImagePanel extends JPanel{
             meme.userId = 1;
             meme.tags.add(tagsText.getText());
 
-            meme.saveMeme();
+           boolean test =  meme.saveMeme();
+           if(test) {
+        	   System.out.println("Save successful");
+           }else {
+        	   System.out.println("Save unsuccessful");
+           }
 
         });
     }
