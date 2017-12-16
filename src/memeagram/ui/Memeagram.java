@@ -179,7 +179,7 @@ public class Memeagram{
     }
 
     public class MemeListRenderer extends DefaultListCellRenderer {
-        Font font = new Font("helvatica", Font.BOLD, 24);
+        Font font = new Font("helvetica", Font.BOLD, 24);
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index,
                                                       boolean isSelected, boolean cellHasFocus) {

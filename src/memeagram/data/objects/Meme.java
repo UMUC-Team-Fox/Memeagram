@@ -324,21 +324,11 @@ public class Meme {
     /**
      * Comparator used to sort an ArrayList of Memes by Number of Likes in Ascending Order
      */
-    public static Comparator<Meme> SORT_LIKES_ASCENDING = (one, other) -> Integer.compare(other.numLikes, one.numLikes);
+    public static Comparator<Meme> SORT_RATING_DESCENDING = (x,y) -> Integer.compare(y.numLikes - y.numDislikes, x.numLikes - x.numDislikes);
 
     /**
      * Comparator used to sort an ArrayList of Memes by Number of Likes in Descending Order
      */
-    public static Comparator<Meme> SORT_LIKES_DESCENDING = (one, other) -> Integer.compare(one.numLikes, other.numLikes);
-
-    /**
-     * Comparator used to sort an ArrayList of Memes by Number of Dislikes in Ascending Order
-     */
-    public static Comparator<Meme> SORT_DISLIKES_ASCENDING = (one,other) -> Integer.compare(other.numDislikes, one.numDislikes);
-
-    /**
-     * Comparator used to sort an ArrayList of Memes by Number of Dislikes in Descending Order
-     */
-    public static Comparator<Meme> SORT_DISLIKES_DESCENDING = (one,other) -> Integer.compare(one.numDislikes, other.numDislikes);
+    public static Comparator<Meme> SORT_RATING_ASCENDING = Comparator.comparingInt(x -> x.numLikes - x.numDislikes);
 
 }

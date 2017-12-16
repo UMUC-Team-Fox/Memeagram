@@ -74,6 +74,12 @@ public class BrowsePanel extends JPanel {
         btnSearchRating.addActionListener(e -> {
             try{
                 memeList = Meme.getAllMemes(context);
+                if (rBtnHighest.isSelected()) {
+                    memeList.sort(Meme.SORT_RATING_DESCENDING);
+                }
+                else if (rBtnLowest.isSelected()) {
+                    memeList.sort(Meme.SORT_RATING_ASCENDING);
+                }
                 updateMemeImage(0);
             }
             catch(Exception ex) {
