@@ -24,6 +24,8 @@ public class DatabaseAccessController {
         Properties connectionProps = new Properties();
         connectionProps.put("user", userName);
         connectionProps.put("password", password);
+        connectionProps.put("useSSL", "false");
+        connectionProps.put("autoReconnect", "true");
 
         conn = DriverManager.getConnection(
                 "jdbc:mysql://" + serverName + ":" + portNumber + "/" + dbName, connectionProps);
